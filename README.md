@@ -38,34 +38,10 @@ An enhanced Text-to-Speech (TTS) studio built upon **Kyutai Pocket-TTS**. It inc
 * **🧽 Automatic Background Noise Separation:** Integrated spectral subtraction, high-pass filtering (80Hz), and dynamic RMS noise gating to produce pristine voice clones even from noisy microphone recordings.
 * **🎙️ Live Microphone Cloning:** Record 5-10 seconds of audio directly in the browser and instantly create a custom voice preset.
 * **🎭 TTS Model Nuance Controls:** Fine-tune expression using **LSD Decode Steps** (acoustic trajectory refinement), **Noise Clamp** (prevents sampling noise spikes), **Natural Punctuation Micro-Breaths** (adds subtle breath gaps at commas/ellipses), and **Context Warm-up** (prevents abrupt sentence starts).
-* **🚀 Hardware Acceleration:** Supports CUDA execution on NVIDIA GPUs (e.g., GTX 1050 Ti) and dynamic int8 quantization on CPU.
+* **🚀 Hardware Acceleration:** Supports CUDA execution on NVIDIA GPUs and dynamic int8 quantization on CPU.
 
 ---
 
-## 📁 Repository Structure
-```
-pocket-tts-enhanced/
-├── app.py                         # Lightweight Studio Entry Point
-├── audio_cleaner.py               # Standalone Audio Denoising CLI Tool
-├── src/
-│   └── studio/                    # Core Modular Studio Package
-│       ├── config.py              # System Settings & Constants
-│       ├── audio/                 # DSP Audio Denoising & Resampling
-│       │   └── cleaner.py
-│       ├── tts/                   # Engine Manager, Pause Parser, Speech Generator
-│       │   ├── model.py
-│       │   ├── parser.py
-│       │   └── generator.py
-│       └── ui/                    # Gradio Web Interface
-│           └── layout.py
-├── requirements.txt               # Dependencies
-├── .gitignore                     # Git Exclusions
-├── README.md                      # Hugging Face Card & Documentation
-├── voice_cloning_enhancements.md  # Detailed Voice Cloning Quality Guide
-└── hardware_features.md           # Hardware Optimization Guide
-```
-
----
 
 ## 🚀 Quick Start
 
