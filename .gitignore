@@ -1,0 +1,80 @@
+# ==========================================
+# Pocket-TTS Enhanced Studio - .gitignore
+# ==========================================
+
+# Virtual Environments
+.venv/
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+
+# Byte-compiled / Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Environment Variables & Tokens
+.env
+.env.local
+.env.*
+*.env
+
+# Audio Cache & Audio Output Files (temporary audio buffers)
+cached_cleaned_voice.wav
+*.wav
+*.mp3
+*.flac
+*.ogg
+voices/
+
+# Model Weights & Safetensors Local Exports
+*.safetensors
+*.bin
+*.onnx
+*.pt
+*.pth
+model.safetensors
+
+# Logs & Debugging
+*.log
+logs/
+
+# IDE & Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.project
+.pydevproject
+.settings/
+
+# OS Generated Files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
