@@ -1,8 +1,3 @@
-
-# 🎙️ Kyutai Pocket-TTS (Enhanced Edition)
-
-An enhanced Text-to-Speech (TTS) studio built upon **Kyutai Pocket-TTS**. It includes **automated background noise separation**, **in-browser microphone voice cloning**, **custom inline pause tags**, and **GPU/CPU optimization**.
-
 ---
 title: Pocket-TTS Enhanced Voice Studio
 emoji: 🎙️
@@ -20,6 +15,10 @@ tags:
   - audio-cleaning
   - kyutai
 ---
+
+# 🎙️ Kyutai Pocket-TTS (Enhanced Edition)
+
+An enhanced Text-to-Speech (TTS) studio built upon **Kyutai Pocket-TTS**. It includes **automated background noise separation**, **in-browser microphone voice cloning**, **custom inline pause tags**, and **GPU/CPU optimization**.
 
 > [!NOTE]
 > **Attribution & Credits:**
