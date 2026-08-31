@@ -11,6 +11,7 @@ from .cleaner import (
     normalize_peak,
     trim_silence,
     apply_broadcast_mastering,
+    apply_vocal_character,
     clean_audio_file,
     process_audio_numpy
 )
@@ -24,6 +25,7 @@ __all__ = [
     "normalize_peak",
     "trim_silence",
     "apply_broadcast_mastering",
+    "apply_vocal_character",
     "clean_audio_file",
     "process_audio_numpy"
 ]

@@ -32,12 +32,15 @@ An enhanced Text-to-Speech (TTS) studio built upon **Kyutai Pocket-TTS**. It inc
 ---
 
 ## ⚡ Enhanced Features
+* **🎙️ Vocal Character & Deep Bass Resonance:** Customize voice timbre with **Heavy / Deep Bass (🎙️)** (+5dB low-shelf EQ boost), **Radio Trailer Voice (📻)**, **Warm & Smooth (☕)**, or **Bright & Crisp (✨)**, plus a manual **Bass Boost Slider (-6dB to +8dB)**.
+* **⚡ Interactive Quick Emotion UI Buttons:** Trigger emotions instantly via dedicated UI buttons (`[😊 Happy]`, `[😢 Sad]`, `[😠 Angry]`, `[🤫 Whisper]`, `[🎭 Dramatic]`, `[😐 Neutral]`) that insert inline tags and update active style with one click.
+* **🎭 Vocal Emotion & Expression Conditioning:** Synthesize speech in 6 emotional vocal styles via global UI dropdown or inline tags (`[emotion: happy]`, `[emotion: sad]`).
 * **🌍 Dynamic Multi-Language Switcher:** Seamlessly switch between English, French (`french_24l`), German (`german_24l`), Spanish (`spanish_24l`), Italian (`italian_24l`), and Portuguese (`portuguese_24l`) checkpoints directly from the UI dropdown.
 * **📄 Script File Upload:** Upload `.txt`, `.md`, or `.srt` script files directly into the UI text prompt area.
 * **⏸️ Flexible Inline Pause Control:** Insert precise silence gaps in text using tags like `[5 sec]`, `[5s]`, `[500ms]`, `[pause 2.5s]`, or `[silence 3 sec]` with zero model inference cost during silences.
 * **🧽 Automatic Background Noise Separation:** Integrated spectral subtraction, high-pass filtering (80Hz), and dynamic RMS noise gating to produce pristine voice clones even from noisy microphone recordings.
-* **🎙️ Live Microphone Cloning:** Record 5-10 seconds of audio directly in the browser and instantly create a custom voice preset.
-* **🎭 TTS Model Nuance Controls:** Fine-tune expression using **LSD Decode Steps** (acoustic trajectory refinement), **Noise Clamp** (prevents sampling noise spikes), **Natural Punctuation Micro-Breaths** (adds subtle breath gaps at commas/ellipses), and **Context Warm-up** (prevents abrupt sentence starts).
+* **🎙️ Live Microphone & Multi-Sample Cloning:** Build averaged **Master Voice Profiles** from up to 3 audio clips and save reusable `.safetensors` voice states.
+* **✨ Studio Broadcast Mastering Filter:** Optional 3-stage post-processing mastering chain (60Hz subsonic cut, +2.5dB 4kHz presence EQ, soft dynamic limiter).
 * **🚀 Hardware Acceleration:** Supports CUDA execution on NVIDIA GPUs and dynamic int8 quantization on CPU.
 
 ---

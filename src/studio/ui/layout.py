@@ -4,6 +4,8 @@ import gradio as gr
 from ..config import (
     PRESET_VOICES,
     SUPPORTED_LANGUAGES,
+    EMOTION_PRESETS,
+    VOCAL_CHARACTERS,
     CLEANED_VOICE_CACHE,
     DEFAULT_TEMP,
     DEFAULT_LSD_STEPS,
@@ -33,7 +35,7 @@ def create_studio_app(model_manager: ModelManager = None) -> gr.Blocks:
         return (24000, int16_data), "[SUCCESS] Audio automatically cleaned & background noise separated!"
 
     def handle_speech_generation(
-        text, voice_input, voice_preset, saved_voice, temp, lsd_steps, noise_clamp, micro_breaths, context_warmup, mastering
+        text, voice_input, voice_preset, saved_voice, emotion_style, character_style, bass_boost, temp, lsd_steps, noise_clamp, micro_breaths, context_warmup, mastering
     ):
         return generate_speech(
             model_manager=model_manager,
@@ -41,6 +43,9 @@ def create_studio_app(model_manager: ModelManager = None) -> gr.Blocks:
             voice_input=voice_input,
             voice_preset=voice_preset,
             saved_voice_choice=saved_voice,
+            emotion_style=emotion_style,
+            vocal_character=character_style,
+            bass_boost=bass_boost,
             temp=temp,
             lsd_steps=lsd_steps,
             noise_clamp=noise_clamp,
@@ -64,6 +69,13 @@ def create_studio_app(model_manager: ModelManager = None) -> gr.Blocks:
         voices = ["None"] + model_manager.get_saved_voices()
         return gr.update(choices=voices)
 
+    def make_emotion_trigger(emotion_name, tag_val):
+        def _handler(current_text):
+            curr = (current_text or "").rstrip()
+            new_text = f"{curr} [emotion: {tag_val}] " if curr else f"[emotion: {tag_val}] "
+            return new_text, emotion_name
+        return _handler
+
     with gr.Blocks(theme=theme, title="Pocket-TTS Voice Studio") as demo:
         gr.Markdown(
             """
@@ -77,6 +89,18 @@ def create_studio_app(model_manager: ModelManager = None) -> gr.Blocks:
                 label="🌍 Select Model Language Checkpoint",
                 choices=list(SUPPORTED_LANGUAGES.keys()),
                 value="English (Default)",
+                scale=2
+            )
+            emotion_dropdown = gr.Dropdown(
+                label="🎭 Primary Vocal Emotion & Style",
+                choices=list(EMOTION_PRESETS.keys()),
+                value="Neutral / Natural",
+                scale=2
+            )
+            character_dropdown = gr.Dropdown(
+                label="🎙️ Vocal Character Timbre (Bass & Resonance)",
+                choices=list(VOCAL_CHARACTERS.keys()),
+                value="Neutral / Balanced",
                 scale=2
             )
         lang_status = gr.Markdown("🌍 Active Model Language: **English (Default)** (`english`)")
@@ -113,11 +137,20 @@ def create_studio_app(model_manager: ModelManager = None) -> gr.Blocks:
                         )
                         clear_script_btn = gr.Button("🗑️ Clear Script", variant="secondary", scale=1)
 
+                gr.Markdown("**⚡ Quick Emotion Triggers (Click button to insert tag & set active style):**")
+                with gr.Row():
+                    btn_happy = gr.Button("😊 Happy", variant="secondary", size="sm")
+                    btn_sad = gr.Button("😢 Sad", variant="secondary", size="sm")
+                    btn_angry = gr.Button("😠 Angry", variant="secondary", size="sm")
+                    btn_whisper = gr.Button("🤫 Whisper", variant="secondary", size="sm")
+                    btn_dramatic = gr.Button("🎭 Dramatic", variant="secondary", size="sm")
+                    btn_neutral = gr.Button("😐 Neutral", variant="secondary", size="sm")
+
                 text_input = gr.Textbox(
-                    label="Script / Text Prompt",
-                    placeholder="Hello! Welcome to our studio. [5 sec] You can use tags like [5 sec], [500ms], [pause 2.5s], or upload a script file!",
+                    label="Script / Text Prompt (Supports inline [emotion: happy] & [5 sec] tags)",
+                    placeholder="Hello! [emotion: happy] I am so excited! [5 sec] [emotion: sad] But now I am sad.",
                     lines=5,
-                    value="Hello world! [5 sec] Notice how custom pauses like [5 sec] or [500ms] work seamlessly in generated speech."
+                    value="Hello world! [emotion: happy] I am so thrilled to try emotional voice cloning! [5 sec] [emotion: dramatic] What comes next... will amaze you."
                 )
 
                 with gr.Tab("🎙️ Live Voice Recording"):
@@ -164,12 +197,21 @@ def create_studio_app(model_manager: ModelManager = None) -> gr.Blocks:
 
                 with gr.Accordion("⚙️ Advanced Voice Quality & Model Nuances", open=False):
                     with gr.Row():
+                        bass_boost_slider = gr.Slider(
+                            minimum=-6.0,
+                            maximum=8.0,
+                            value=0.0,
+                            step=0.5,
+                            label="🔊 Low-End Bass Resonance Boost (dB)",
+                            scale=1
+                        )
+                    with gr.Row():
                         temp_slider = gr.Slider(
                             minimum=0.1,
                             maximum=0.5,
                             value=DEFAULT_TEMP,
                             step=0.01,
-                            label="Temperature (0.22 recommended)",
+                            label="Base Temperature (0.22 recommended)",
                             scale=1
                         )
                         lsd_slider = gr.Slider(
@@ -177,7 +219,7 @@ def create_studio_app(model_manager: ModelManager = None) -> gr.Blocks:
                             maximum=5,
                             value=DEFAULT_LSD_STEPS,
                             step=1,
-                            label="LSD Decode Steps (Acoustic detail refinement)",
+                            label="Base LSD Decode Steps (Acoustic detail refinement)",
                             scale=1
                         )
                     with gr.Row():
@@ -186,7 +228,7 @@ def create_studio_app(model_manager: ModelManager = None) -> gr.Blocks:
                             maximum=3.0,
                             value=DEFAULT_NOISE_CLAMP,
                             step=0.1,
-                            label="Noise Clamp (Limits sampling noise spikes)",
+                            label="Base Noise Clamp (Limits sampling noise spikes)",
                             scale=1
                         )
                     with gr.Row():
@@ -252,6 +294,14 @@ def create_studio_app(model_manager: ModelManager = None) -> gr.Blocks:
             outputs=[ensemble_status, saved_voice_dropdown]
         )
 
+        # Quick Emotion Trigger Buttons
+        btn_happy.click(fn=make_emotion_trigger("Happy / Energetic (😊)", "happy"), inputs=[text_input], outputs=[text_input, emotion_dropdown])
+        btn_sad.click(fn=make_emotion_trigger("Sad / Melancholic (😢)", "sad"), inputs=[text_input], outputs=[text_input, emotion_dropdown])
+        btn_angry.click(fn=make_emotion_trigger("Angry / Intense (😠)", "angry"), inputs=[text_input], outputs=[text_input, emotion_dropdown])
+        btn_whisper.click(fn=make_emotion_trigger("Whisper / Gentle (🤫)", "whisper"), inputs=[text_input], outputs=[text_input, emotion_dropdown])
+        btn_dramatic.click(fn=make_emotion_trigger("Dramatic / Storyteller (🎭)", "dramatic"), inputs=[text_input], outputs=[text_input, emotion_dropdown])
+        btn_neutral.click(fn=make_emotion_trigger("Neutral / Natural", "neutral"), inputs=[text_input], outputs=[text_input, emotion_dropdown])
+
         generate_btn.click(
             fn=handle_speech_generation,
             inputs=[
@@ -259,6 +309,9 @@ def create_studio_app(model_manager: ModelManager = None) -> gr.Blocks:
                 mic_input,
                 preset_dropdown,
                 saved_voice_dropdown,
+                emotion_dropdown,
+                character_dropdown,
+                bass_boost_slider,
                 temp_slider,
                 lsd_slider,
                 noise_clamp_slider,

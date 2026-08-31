@@ -152,6 +152,72 @@ def apply_broadcast_mastering(data: np.ndarray, sr: int = SAMPLE_RATE) -> np.nda
     mastered = np.clip(eq_data, -0.98, 0.98)
     return mastered.astype(np.float32)
 
+def apply_vocal_character(
+    data: np.ndarray,
+    sr: int = SAMPLE_RATE,
+    character_style: str = "Neutral / Balanced",
+    bass_boost_db: float = 0.0
+) -> np.ndarray:
+    """
+    Applies vocal timbre and character equalization:
+    - Low-shelf biquad filter for bass boost (150Hz)
+    - High-shelf biquad filter for presence (5000Hz)
+    """
+    if data is None or len(data) == 0:
+        return data
+
+    total_bass = float(bass_boost_db)
+    if "Heavy" in character_style or "Deep" in character_style:
+        total_bass += 5.0
+    elif "Radio" in character_style or "Trailer" in character_style:
+        total_bass += 6.5
+    elif "Warm" in character_style:
+        total_bass += 3.5
+
+    presence_boost = 0.0
+    if "Radio" in character_style or "Trailer" in character_style:
+        presence_boost += 3.0
+    elif "Bright" in character_style or "Crisp" in character_style:
+        presence_boost += 4.5
+
+    # 1. Low Shelf Bass Filter (fc = 150Hz)
+    if abs(total_bass) > 0.1:
+        fc = 150.0
+        A = 10 ** (total_bass / 40.0)
+        w0 = 2 * np.pi * fc / sr
+        alpha = np.sin(w0) / (2.0 * 0.707)
+        
+        b0 = A * ((A + 1) - (A - 1) * np.cos(w0) + 2 * np.sqrt(A) * alpha)
+        b1 = 2 * A * ((A - 1) - (A + 1) * np.cos(w0))
+        b2 = A * ((A + 1) - (A - 1) * np.cos(w0) - 2 * np.sqrt(A) * alpha)
+        a0 = (A + 1) + (A - 1) * np.cos(w0) + 2 * np.sqrt(A) * alpha
+        a1 = -2 * ((A - 1) + (A + 1) * np.cos(w0))
+        a2 = (A + 1) + (A - 1) * np.cos(w0) - 2 * np.sqrt(A) * alpha
+
+        b = np.array([b0/a0, b1/a0, b2/a0], dtype=np.float32)
+        a = np.array([1.0, a1/a0, a2/a0], dtype=np.float32)
+        data = signal.lfilter(b, a, data)
+
+    # 2. High Shelf Presence Filter (fc = 5000Hz)
+    if abs(presence_boost) > 0.1:
+        fc2 = 5000.0
+        A2 = 10 ** (presence_boost / 40.0)
+        w02 = 2 * np.pi * fc2 / sr
+        alpha2 = np.sin(w02) / (2.0 * 0.707)
+
+        b0 = A2 * ((A2 + 1) + (A2 - 1) * np.cos(w02) + 2 * np.sqrt(A2) * alpha2)
+        b1 = -2 * A2 * ((A2 - 1) + (A2 + 1) * np.cos(w02))
+        b2 = A2 * ((A2 + 1) + (A2 - 1) * np.cos(w02) - 2 * np.sqrt(A2) * alpha2)
+        a0 = (A2 + 1) - (A2 - 1) * np.cos(w02) + 2 * np.sqrt(A2) * alpha2
+        a1 = 2 * ((A2 - 1) - (A2 + 1) * np.cos(w02))
+        a2 = (A2 + 1) - (A2 - 1) * np.cos(w02) - 2 * np.sqrt(A2) * alpha2
+
+        b = np.array([b0/a0, b1/a0, b2/a0], dtype=np.float32)
+        a = np.array([1.0, a1/a0, a2/a0], dtype=np.float32)
+        data = signal.lfilter(b, a, data)
+
+    return np.clip(data, -0.98, 0.98).astype(np.float32)
+
 def process_audio_numpy(audio_data: np.ndarray, sr: int) -> np.ndarray:
     """Runs full cleaning pipeline on in-memory numpy audio array."""
     # Convert integer formats to float32 [-1.0, 1.0]

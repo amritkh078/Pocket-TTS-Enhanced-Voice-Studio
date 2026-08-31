@@ -34,3 +34,52 @@ SUPPORTED_LANGUAGES = {
     "Portuguese (Português 24L)": "portuguese_24l"
 }
 
+EMOTION_PRESETS = {
+    "Neutral / Natural": {
+        "temp": 0.22,
+        "lsd_steps": 2,
+        "noise_clamp": 1.5,
+        "pause_mult": 1.0
+    },
+    "Happy / Energetic (😊)": {
+        "temp": 0.30,
+        "lsd_steps": 3,
+        "noise_clamp": 1.8,
+        "pause_mult": 0.9
+    },
+    "Sad / Melancholic (😢)": {
+        "temp": 0.18,
+        "lsd_steps": 2,
+        "noise_clamp": 1.3,
+        "pause_mult": 1.4
+    },
+    "Angry / Intense (😠)": {
+        "temp": 0.20,
+        "lsd_steps": 3,
+        "noise_clamp": 1.1,
+        "pause_mult": 0.8
+    },
+    "Whisper / Gentle (🤫)": {
+        "temp": 0.16,
+        "lsd_steps": 2,
+        "noise_clamp": 1.2,
+        "pause_mult": 1.2
+    },
+    "Dramatic / Storyteller (🎭)": {
+        "temp": 0.26,
+        "lsd_steps": 3,
+        "noise_clamp": 1.6,
+        "pause_mult": 1.6
+    }
+}
+
+VOCAL_CHARACTERS = {
+    "Neutral / Balanced": "neutral",
+    "Heavy / Deep Bass (🎙️)": "heavy_bass",
+    "Radio Trailer Voice (📻)": "radio_trailer",
+    "Warm & Smooth (☕)": "warm_smooth",
+    "Bright & Crisp (✨)": "bright_crisp"
+}
+
+
+
